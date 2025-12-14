@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, globalShortcut } = require('electron');
 const path = require('path');
 const ElectronStore = require('electron-store');
 const { autoUpdater } = require('electron-updater');
@@ -7,11 +7,11 @@ const { autoUpdater } = require('electron-updater');
 const configStore = new ElectronStore({
   name: 'youtube-tv-config',
   defaults: {
-    window: {
-      width: 1280,
-      height: 720,
-      fullscreen: false
-    },
+      window: {
+        width: 1280,
+        height: 720,
+        fullscreen: true
+      },
     features: {
       enableAdBlock: true,
       enableSponsorBlock: true,
@@ -68,6 +68,15 @@ function createWindow() {
 
   // Load YouTube TV
   mainWindow.loadURL('https://www.youtube.com/tv#/');
+
+  // Force fullscreen on first load if configured to do so
+  if (windowConfig.fullscreen) {
+    setTimeout(() => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.setFullScreen(true);
+      }
+    }, 100);
+  }
 
   // Set custom user agent to emulate Smart TV
   mainWindow.webContents.setUserAgent('Mozilla/5.0 (WebOS; SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5283.0 Safari/537.36');
@@ -217,6 +226,15 @@ ipcMain.handle('open-settings', () => {
       }
 });
 
+// Handle fullscreen toggle requests from renderer process
+ipcMain.handle('toggle-fullscreen', () => {
+  if (mainWindow) {
+    mainWindow.setFullScreen(!mainWindow.isFullScreen());
+    return mainWindow.isFullScreen();
+  }
+  return false;
+});
+
 // Handle auto-updates
 function setupAutoUpdater() {
   autoUpdater.checkForUpdatesAndNotify();
@@ -238,6 +256,13 @@ app.whenReady().then(() => {
   createWindow();
   setupAutoUpdater();
 
+  // Register global shortcut for F11 to toggle fullscreen
+  globalShortcut.register('F11', () => {
+    if (mainWindow) {
+      mainWindow.setFullScreen(!mainWindow.isFullScreen());
+    }
+  });
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -246,6 +271,9 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  // Unregister global shortcut when app is closing
+  globalShortcut.unregisterAll();
+
   if (process.platform !== 'darwin') {
     app.quit();
   }

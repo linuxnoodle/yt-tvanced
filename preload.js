@@ -22,6 +22,11 @@ contextBridge.exposeInMainWorld(
     // Version info
     getAppVersion: () => {
       return process.env.npm_package_version || '1.0.0';
+    },
+
+    // Fullscreen control
+    toggleFullscreen: () => {
+      return ipcRenderer.invoke('toggle-fullscreen');
     }
   }
 );
@@ -39,6 +44,23 @@ window.addEventListener('DOMContentLoaded', () => {
       if (window.tizenTubeAPI) {
         window.tizenTubeAPI.openSettings();
       }
+    },
+    toggleFullscreen: () => {
+      if (window.tizenTubeAPI) {
+        // This will be implemented to call the main process
+        return window.tizenTubeAPI.toggleFullscreen();
+      }
+      return false;
     }
   };
+
+  // Add F11 key handling for fullscreen toggle
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'F11') {
+      event.preventDefault();
+      if (window.tizenTube && window.tizenTube.toggleFullscreen) {
+        window.tizenTube.toggleFullscreen();
+      }
+    }
+  });
 });
