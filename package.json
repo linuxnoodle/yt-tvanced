@@ -1,0 +1,52 @@
+{
+  "name": "youtube-tv-electron",
+  "version": "1.0.0",
+  "description": "YouTube TV Electron Client with TizenTube Features",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --remote-debugging-port=8315",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Cline",
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "electron": "^28.0.0",
+    "electron-store": "^8.1.0",
+    "electron-updater": "^6.1.7",
+    "whatwg-fetch": "^3.6.2",
+    "core-js": "^3.33.0",
+    "@formatjs/intl-getcanonicallocales": "^2.2.0",
+    "@formatjs/intl-locale": "^3.4.0",
+    "@formatjs/intl-displaynames": "^6.6.0",
+    "tiny-sha256": "^1.0.2"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.3",
+    "concurrently": "^8.2.1"
+  },
+  "build": {
+    "appId": "com.electron.youtubetv",
+    "productName": "YouTube TV Enhanced",
+    "files": [
+      "**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  }
+}
