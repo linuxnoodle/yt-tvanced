@@ -1,7 +1,7 @@
 <h1 align="center">PompyTube</h1>
 
 <div align="center">
-  <img src="assets/icon.png" alt="PompyTube Icon" width="200">
+  <img src="assets/icon.png" alt="PompyTube Icon" style="background-color: transparent;" width="200">
 </div>
 
 A cross-platform (desktop only) YouTube TV client with Adblocking and SponsorBlock. This project was created when I setup a home PC to connect to a TV, but Kodi was genuinely just terrible. I just launch this through Steam Big Picture.
