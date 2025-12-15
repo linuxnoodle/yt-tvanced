@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld(
-  'tizenTubeAPI', {
+  'pompyTubeAPI', {
     // Configuration management
     getConfig: (key) => ipcRenderer.invoke('get-config', key),
     setConfig: (key, value) => ipcRenderer.invoke('set-config', key, value),
@@ -14,8 +14,8 @@ contextBridge.exposeInMainWorld(
     // Utility functions
     showNotification: (title, message) => {
       // This will be implemented in the renderer process
-      if (window.showTizenTubeNotification) {
-        window.showTizenTubeNotification(title, message);
+      if (window.showPompyTubeNotification) {
+        window.showPompyTubeNotification(title, message);
       }
     },
 
@@ -34,21 +34,21 @@ contextBridge.exposeInMainWorld(
 // Polyfills and global setup
 window.addEventListener('DOMContentLoaded', () => {
   // Set up global configuration access
-  window.tizenTubeConfig = window.tizenTubeConfig || {};
+  window.pompyTubeConfig = window.pompyTubeConfig || {};
 
   // Expose API to window for backward compatibility
-  window.tizenTube = {
-    config: window.tizenTubeConfig,
-    api: window.tizenTubeAPI,
+  window.pompyTube = {
+    config: window.pompyTubeConfig,
+    api: window.pompyTubeAPI,
     showSettings: () => {
-      if (window.tizenTubeAPI) {
-        window.tizenTubeAPI.openSettings();
+      if (window.pompyTubeAPI) {
+        window.pompyTubeAPI.openSettings();
       }
     },
     toggleFullscreen: () => {
-      if (window.tizenTubeAPI) {
+      if (window.pompyTubeAPI) {
         // This will be implemented to call the main process
-        return window.tizenTubeAPI.toggleFullscreen();
+        return window.pompyTubeAPI.toggleFullscreen();
       }
       return false;
     }
@@ -58,8 +58,8 @@ window.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'F11') {
       event.preventDefault();
-      if (window.tizenTube && window.tizenTube.toggleFullscreen) {
-        window.tizenTube.toggleFullscreen();
+      if (window.pompyTube && window.pompyTube.toggleFullscreen) {
+        window.pompyTube.toggleFullscreen();
       }
     }
   });

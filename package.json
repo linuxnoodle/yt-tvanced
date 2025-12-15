@@ -1,7 +1,7 @@
 {
   "name": "youtube-tv-electron",
   "version": "1.0.0",
-  "description": "YouTube TV Electron Client with TizenTube Features",
+  "description": "YouTube TV Electron Client with PompyTube Features",
   "main": "main.js",
   "scripts": {
     "start": "electron .",

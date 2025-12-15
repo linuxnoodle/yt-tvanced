@@ -37,7 +37,14 @@ const configStore = new ElectronStore({
       hideWatchedVideosPages: [],
       enableHideEndScreenCards: false,
       enableYouThereRenderer: true,
-      enablePaidPromotionOverlay: true
+      enablePaidPromotionOverlay: true,
+      enableSpecialTheme: true,
+      themePrimaryColor: '#0f0f0f',
+      themeSecondaryColor: '#1a1a1a',
+      themeBorderColor: '#2a2a2a',
+      themeTextPrimary: '#ffffff',
+      themeTextSecondary: '#b8b8b8',
+      themeAccentColor: '#4CAF50'
     }
   }
 });
@@ -62,7 +69,7 @@ function createWindow() {
       partition: 'persist:youtubetv'
     },
     icon: path.join(__dirname, 'assets', 'icon.png'),
-    title: 'YouTube TV Enhanced',
+    title: 'PompyTube',
     autoHideMenuBar: true
   });
 
@@ -79,7 +86,7 @@ function createWindow() {
   }, 100);
 
   // Set custom user agent to emulate Smart TV
-  mainWindow.webContents.setUserAgent('Mozilla/5.0 (WebOS; SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5283.0 Safari/537.36');
+  mainWindow.webContents.setUserAgent('Mozilla/5.0 (WebOS; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.128 Safari/537.36 WebAppManager');
 
   // Handle window events
   mainWindow.on('closed', () => {
@@ -102,9 +109,9 @@ function createWindow() {
     configStore.set('window.fullscreen', false);
   });
 
-  // Inject TizenTube features when page is loaded
+  // Inject PompyTube features when page is loaded
   mainWindow.webContents.on('did-finish-load', () => {
-    injectTizenTubeFeatures();
+    injectPompyTubeFeatures();
   });
 
   // Handle navigation
@@ -116,18 +123,20 @@ function createWindow() {
   });
 }
 
-// Inject TizenTube features into the page
-function injectTizenTubeFeatures() {
+// Inject PompyTube features into the page
+function injectPompyTubeFeatures() {
   if (!mainWindow || mainWindow.isDestroyed()) return;
 
   const features = configStore.get('features');
 
-  // Inject configuration first
+
+
+  // Force enableSpecialTheme for now (will be configurable later)
+  features.enableSpecialTheme = true;
   mainWindow.webContents.executeJavaScript(`
-    window.tizenTubeConfig = ${JSON.stringify(features)};
-    // console.log('TizenTube configuration injected');
+    window.pompyTubeConfig = ${JSON.stringify(features)};
   `).catch(err => {
-    // console.error('Failed to inject configuration:', err);
+    console.error('Failed to inject configuration:', err);
   });
 
   // Inject core polyfills
@@ -170,38 +179,65 @@ function injectTizenTubeFeatures() {
     // console.error('Failed to inject polyfills:', err);
   });
 
-// Load simplified TizenTube script
-try {
-  // Read and process the simplified userScript
-  const fs = require('fs');
-  const tizenTubeScriptPath = path.join(__dirname, 'tizentube', 'userScriptSimple.js');
-  let scriptContent = fs.readFileSync(tizenTubeScriptPath, 'utf8');
+  // Load theme system first
+  try {
+    const fs = require('fs');
+    const themeScriptPath = path.join(__dirname, 'pompytube', 'theme.js');
+    let themeScriptContent = fs.readFileSync(themeScriptPath, 'utf8');
 
-  // Wrap the script in a try-catch to get better error reporting
-  const wrappedScript = `(function() {
-    try {
-      ${scriptContent}
-      // console.log('TizenTube script executed successfully');
-      return true;
-    } catch (error) {
-      // console.error('TizenTube script error:', error.message);
-      // console.error('Stack:', error.stack);
-      if (window.tizenTubeAPI && window.tizenTubeAPI.showNotification) {
-        window.tizenTubeAPI.showNotification('TizenTube Error', 'Failed to load: ' + error.message);
+    const wrappedThemeScript = `(function() {
+      try {
+        ${themeScriptContent}
+        return true;
+      } catch (error) {
+        console.error('Theme script error:', error.message);
+        console.error('Stack:', error.stack);
+        if (window.pompyTubeAPI && window.pompyTubeAPI.showNotification) {
+          window.pompyTubeAPI.showNotification('Theme Error', 'Failed to load: ' + error.message);
+        }
+        return false;
       }
-      return false;
-    }
-  })();`;
+    })();`;
 
-  // Inject the script content
-  mainWindow.webContents.executeJavaScript(wrappedScript).catch(err => {
-    // console.error('Failed to inject TizenTube script:', err);
-  });
+    mainWindow.webContents.executeJavaScript(wrappedThemeScript).catch(err => {
+      console.error('Failed to inject theme script:', err);
+    });
+  } catch (err) {
+    console.error('Failed to read theme script file:', err);
+  }
 
-  // console.log('TizenTube script injection initiated');
-} catch (err) {
-  // console.error('Failed to read TizenTube script file:', err);
-}
+  // Load simplified PompyTube script
+  try {
+    // Read and process the simplified userScript
+    const fs = require('fs');
+    const pompyTubeScriptPath = path.join(__dirname, 'pompytube', 'userScriptSimple.js');
+    let scriptContent = fs.readFileSync(pompyTubeScriptPath, 'utf8');
+
+    // Wrap the script in a try-catch to get better error reporting
+    const wrappedScript = `(function() {
+      try {
+        ${scriptContent}
+        // console.log('PompyTube script executed successfully');
+        return true;
+      } catch (error) {
+        // console.error('PompyTube script error:', error.message);
+        // console.error('Stack:', error.stack);
+        if (window.pompyTubeAPI && window.pompyTubeAPI.showNotification) {
+          window.pompyTubeAPI.showNotification('PompyTube Error', 'Failed to load: ' + error.message);
+        }
+        return false;
+      }
+    })();`;
+
+    // Inject the script content
+    mainWindow.webContents.executeJavaScript(wrappedScript).catch(err => {
+      // console.error('Failed to inject PompyTube script:', err);
+    });
+
+    // console.log('PompyTube script injection initiated');
+  } catch (err) {
+    // console.error('Failed to read PompyTube script file:', err);
+  }
 }
 
 // Handle IPC messages
@@ -217,10 +253,10 @@ ipcMain.handle('set-config', (event, key, value) => {
 ipcMain.handle('open-settings', () => {
       if (mainWindow) {
         mainWindow.webContents.executeJavaScript(`
-          if (window.showTizenTubeSettings) {
-            window.showTizenTubeSettings();
+          if (window.showPompyTubeSettings) {
+            window.showPompyTubeSettings();
           } else {
-            // console.log('TizenTube settings function not available');
+            // console.log('PompyTube settings function not available');
           }
         `);
       }
@@ -281,9 +317,9 @@ app.on('window-all-closed', () => {
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
-  // console.error('Uncaught exception:', error);
+  console.error('Uncaught exception:', error);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  // console.error('Unhandled rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled rejection at:', promise, 'reason:', reason);
 });

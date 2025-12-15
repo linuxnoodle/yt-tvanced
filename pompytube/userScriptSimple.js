@@ -1,7 +1,7 @@
-// Simplified TizenTube script without ES modules for better Electron compatibility
+// Simplified PompyTube script without ES modules for better Electron compatibility
 
 // Configuration system
-window.tizenTubeConfig = window.tizenTubeConfig || {
+window.pompyTubeConfig = window.pompyTubeConfig || {
   enableAdBlock: true,
   enableSponsorBlock: true,
   sponsorBlockManualSkips: ['intro', 'outro', 'filler'],
@@ -31,14 +31,14 @@ window.tizenTubeConfig = window.tizenTubeConfig || {
 };
 
 function configRead(key) {
-  return window.tizenTubeConfig[key] !== undefined ? window.tizenTubeConfig[key] : null;
+  return window.pompyTubeConfig[key] !== undefined ? window.pompyTubeConfig[key] : null;
 }
 
 function configWrite(key, value) {
-  window.tizenTubeConfig[key] = value;
+  window.pompyTubeConfig[key] = value;
   if (window.localStorage) {
     try {
-      localStorage.setItem('tizenTubeConfig', JSON.stringify(window.tizenTubeConfig));
+      localStorage.setItem('pompyTubeConfig', JSON.stringify(window.pompyTubeConfig));
     } catch (e) {
       // console.warn('Failed to save config:', e);
     }
@@ -47,10 +47,10 @@ function configWrite(key, value) {
 
 // Toast notification system
 function showToast(title, message, duration = 3000) {
-  let toastContainer = document.getElementById('tizentube-toast-container');
+  let toastContainer = document.getElementById('pompytube-toast-container');
   if (!toastContainer) {
     toastContainer = document.createElement('div');
-    toastContainer.id = 'tizentube-toast-container';
+    toastContainer.id = 'pompytube-toast-container';
     toastContainer.style.position = 'fixed';
     toastContainer.style.bottom = '20px';
     toastContainer.style.right = '20px';
@@ -172,7 +172,7 @@ function showToast(title, message, duration = 3000) {
   }
 
   // console.log('Ad Blocking enabled');
-  showToast('TizenTube', 'Ad blocking is active');
+  showToast('PompyTube', 'Ad blocking is active');
 })();
 
 // SponsorBlock implementation with comprehensive error handling
@@ -183,7 +183,7 @@ function showToast(title, message, duration = 3000) {
             return;
           }
 
-    // SHA-256 implementation from TizenTube (proper implementation)
+    // SHA-256 implementation from PompyTube (proper implementation)
     var sha256 = function sha256(ascii) {
       function rightRotate(value, amount) {
         return (value >>> amount) | (value << (32 - amount));
@@ -540,8 +540,14 @@ function showToast(title, message, duration = 3000) {
           this.segmentsoverlay.style.setProperty('bottom', `${sliderRect.bottom - sliderRect.top}px`, 'important');
           this.segmentsoverlay.style.setProperty('pointer-events', 'none', 'important');
 
+          // Fix for Windows rendering issue: ensure overlay doesn't affect video content
+          // Use isolation to prevent color blending with video content
+          this.segmentsoverlay.style.setProperty('isolation', 'isolate', 'important');
+          this.segmentsoverlay.style.setProperty('mix-blend-mode', 'normal', 'important');
+          this.segmentsoverlay.style.setProperty('backdrop-filter', 'none', 'important');
+
           // Add debug styling temporarily to make overlay visible
-          this.segmentsoverlay.style.setProperty('outline', '2px solid red', 'important');
+          this.segmentsoverlay.style.setProperty('outline', '2px solid lightgrey', 'important');
 
           this.segments.forEach((segment, index) => {
             const [start, end] = segment.segment;
@@ -569,20 +575,28 @@ function showToast(title, message, duration = 3000) {
             mutations.forEach((m) => {
               if (m.removedNodes) {
                 for (const node of m.removedNodes) {
-                  if (node === this.segmentsoverlay) {
-                    // console.info('bringing back segments overlay');
-                    this.slider.appendChild(this.segmentsoverlay);
-                  }
-                }
-              }
+        if (node === this.segmentsoverlay) {
+          // console.info('bringing back segments overlay');
+          this.slider.appendChild(this.segmentsoverlay);
+        }
+          }
+        }
 
-              if (document.querySelector('ytlr-progress-bar').getAttribute('hybridnavfocusable') === 'false') {
-                this.segmentsoverlay.style.setProperty('display', 'none', 'important');
-              } else {
-                this.segmentsoverlay.style.setProperty('display', 'block', 'important');
-              }
-            });
-          });
+        // Always keep overlay visible - the hybridnavfocusable check was hiding it during scrubbing
+        this.segmentsoverlay.style.setProperty('display', 'block', 'important');
+
+        // Adjust overlay height if progress bar height changed (e.g., when progress bar is selected/highlighted)
+        const progressBarElement = document.querySelector('ytlr-redux-connect-ytlr-progress-bar ytlr-progress-bar ytlr-multi-markers-player-bar-renderer');
+        if (progressBarElement) {
+          const progressBarRect = progressBarElement.getBoundingClientRect();
+          const currentOverlayHeight = parseFloat(this.segmentsoverlay.style.height);
+          const newOverlayHeight = progressBarRect.height;
+          if (Math.abs(currentOverlayHeight - newOverlayHeight) > 0.5) { // Allow small tolerance for floating point
+            this.segmentsoverlay.style.setProperty('height', `${newOverlayHeight}px`, 'important');
+          }
+        }
+      });
+    });
 
           this.sliderInterval = setInterval(() => {
             this.slider = document.querySelector('ytlr-redux-connect-ytlr-progress-bar');
@@ -826,41 +840,43 @@ function showToast(title, message, duration = 3000) {
     // console.log(`SponsorBlock ${configRead('enableSponsorBlock') ? 'enabled' : 'disabled'}`);
 
     if (configRead('enableSponsorBlock')) {
-      showToast('TizenTube', 'SponsorBlock is active');
+      showToast('PompyTube', 'SponsorBlock is active');
     }
   } catch (error) {
     // console.error('SponsorBlock: Critical error in main block:', error);
     showToast('SponsorBlock Error', `Failed to load: ${error.message}`);
   }
 })();
-// console.log('TizenTube Electron Edition initialized');
+
+
+// console.log('PompyTube Electron Edition initialized');
 
 // Show welcome message
 if (configRead('showWelcomeToast')) {
   setTimeout(() => {
-    showToast('TizenTube', 'Enhanced YouTube TV experience loaded');
+    showToast('PompyTube', 'Enhanced YouTube TV experience loaded');
   }, 2000);
 }
 
 // Expose global functions
-window.showTizenTubeSettings = function() {
-  showToast('TizenTube', 'Settings will be implemented in next version');
+window.showPompyTubeSettings = function() {
+  showToast('PompyTube', 'Settings will be implemented in next version');
 };
 
 // Handle errors globally with better logging
 window.addEventListener('error', (event) => {
-  // console.error('TizenTube Global Error:', event.error);
+  // console.error('PompyTube Global Error:', event.error);
   // console.error('Error stack:', event.error?.stack);
   // console.error('Error message:', event.error?.message);
   // console.error('Error file:', event.filename);
   // console.error('Error line:', event.lineno);
   // console.error('Error column:', event.colno);
-  showToast('TizenTube Error', `An error occurred: ${event.error?.message || 'Unknown error'}`);
+  showToast('PompyTube Error', `An error occurred: ${event.error?.message || 'Unknown error'}`);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-  // console.error('TizenTube Unhandled Rejection:', event.reason);
+  // console.error('PompyTube Unhandled Rejection:', event.reason);
   // console.error('Rejection stack:', event.reason?.stack);
   // console.error('Rejection message:', event.reason?.message);
-  showToast('TizenTube Error', `Unhandled rejection: ${event.reason?.message || 'Unknown error'}`);
+  showToast('PompyTube Error', `Unhandled rejection: ${event.reason?.message || 'Unknown error'}`);
 });

@@ -92,5 +92,5 @@ for (const key in window._yttv) {
 // console.log(`Ad Blocking ${adBlockEnabled ? 'enabled' : 'disabled'}`);
 
 if (adBlockEnabled) {
-  showToast('TizenTube', 'Ad blocking is active');
+  showToast('PompyTube', 'Ad blocking is active');
 }

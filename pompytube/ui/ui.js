@@ -1,10 +1,15 @@
-// Basic UI components for TizenTube
+// Basic UI components for PompyTube
 import { configRead } from '../config.js';
 import { showToast, showModal, overlayPanelItemListRenderer, overlayMessageRenderer } from './ytUI.js';
 
 // Settings UI
-export function openTizenTubeSettingsModal() {
+export function openPompyTubeSettingsModal() {
   const settings = [
+    {
+      name: 'Special Theme',
+      icon: 'PALETTE',
+      value: 'enableSpecialTheme'
+    },
     {
       name: 'Ad Blocking',
       icon: 'DOLLAR_SIGN',
@@ -61,7 +66,7 @@ export function openTizenTubeSettingsModal() {
   });
 
   showModal(
-    'TizenTube Settings',
+    'PompyTube Settings',
     overlayPanelItemListRenderer(buttons, 0),
     'tt-settings'
   );
@@ -69,14 +74,13 @@ export function openTizenTubeSettingsModal() {
 
 function createSettingButton(setting, index, currentVal) {
   const button = document.createElement('div');
+  button.className = 'pompytube-button';
   button.style.padding = '12px';
-  button.style.backgroundColor = 'transparent';
   button.style.borderRadius = '4px';
   button.style.cursor = 'pointer';
   button.style.display = 'flex';
   button.style.alignItems = 'center';
   button.style.justifyContent = 'space-between';
-  button.style.borderBottom = '1px solid #444';
 
   const textContainer = document.createElement('div');
   textContainer.style.flex = '1';
@@ -112,10 +116,10 @@ function createSettingButton(setting, index, currentVal) {
     if (setting.value) {
       // Toggle boolean setting
       const newValue = !configRead(setting.value);
-      window.tizenTubeConfigWrite(setting.value, newValue);
+      window.pompyTubeConfigWrite(setting.value, newValue);
       statusElement.textContent = newValue ? 'ON' : 'OFF';
       statusElement.style.color = newValue ? '#4CAF50' : '#F44336';
-      showToast('TizenTube', `${setting.name} ${newValue ? 'enabled' : 'disabled'}`);
+      showToast('PompyTube', `${setting.name} ${newValue ? 'enabled' : 'disabled'}`);
     } else if (setting.options) {
       // Show submenu
       if (typeof setting.options === 'function') {
@@ -195,10 +199,10 @@ function createBooleanOptionButton(option, index, currentVal) {
 
   button.onclick = () => {
     const newValue = !currentVal;
-    window.tizenTubeConfigWrite(option.value, newValue);
+    window.pompyTubeConfigWrite(option.value, newValue);
     statusElement.textContent = newValue ? 'ON' : 'OFF';
     statusElement.style.color = newValue ? '#4CAF50' : '#F44336';
-    showToast('TizenTube', `${option.name} ${newValue ? 'enabled' : 'disabled'}`);
+    showToast('PompyTube', `${option.name} ${newValue ? 'enabled' : 'disabled'}`);
   };
 
   return {
@@ -299,8 +303,8 @@ function createQualityButton(quality) {
 
   button.onclick = () => {
     const qualityValue = quality === 'Auto' ? 'auto' : quality.toLowerCase();
-    window.tizenTubeConfigWrite('preferredVideoQuality', qualityValue);
-    showToast('TizenTube', `Preferred quality set to ${quality}`);
+    window.pompyTubeConfigWrite('preferredVideoQuality', qualityValue);
+    showToast('PompyTube', `Preferred quality set to ${quality}`);
     closeModal('tt-settings-videoQuality');
   };
 
@@ -334,4 +338,4 @@ function getQualityIndex() {
 }
 
 // Expose settings function
-window.openTizenTubeSettingsModal = openTizenTubeSettingsModal;
+window.openPompyTubeSettingsModal = openPompyTubeSettingsModal;

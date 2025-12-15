@@ -1,16 +1,16 @@
-// Configuration system for TizenTube features
-// This provides the same interface as the original TizenTube config system
+// Configuration system for PompyTube features
+// This provides the same interface as the original PompyTube config system
 // but adapted for Electron environment
 
 // Get configuration from the global object injected by main process
 const getConfigFromMain = (key) => {
-  if (window.tizenTubeConfig && window.tizenTubeConfig.hasOwnProperty(key)) {
-    return window.tizenTubeConfig[key];
+  if (window.pompyTubeConfig && window.pompyTubeConfig.hasOwnProperty(key)) {
+    return window.pompyTubeConfig[key];
   }
 
   // Fallback to localStorage if available
   try {
-    const storedConfig = JSON.parse(localStorage.getItem('tizenTubeConfig') || '{}');
+    const storedConfig = JSON.parse(localStorage.getItem('pompyTubeConfig') || '{}');
     if (storedConfig.hasOwnProperty(key)) {
       return storedConfig[key];
     }
@@ -44,7 +44,14 @@ const getConfigFromMain = (key) => {
     hideWatchedVideosPages: [],
     enableHideEndScreenCards: false,
     enableYouThereRenderer: true,
-    enablePaidPromotionOverlay: true
+    enablePaidPromotionOverlay: true,
+    enableSpecialTheme: true,
+    themePrimaryColor: '#0f0f0f',
+    themeSecondaryColor: '#1a1a1a',
+    themeBorderColor: '#2a2a2a',
+    themeTextPrimary: '#ffffff',
+    themeTextSecondary: '#b8b8b8',
+    themeAccentColor: '#4CAF50'
   };
 
   return defaults[key] !== undefined ? defaults[key] : null;
@@ -53,13 +60,13 @@ const getConfigFromMain = (key) => {
 // Set configuration and sync with main process if available
 const setConfig = async (key, value) => {
   // Update local config
-  window.tizenTubeConfig = window.tizenTubeConfig || {};
-  window.tizenTubeConfig[key] = value;
+  window.pompyTubeConfig = window.pompyTubeConfig || {};
+  window.pompyTubeConfig[key] = value;
 
   // Sync with main process if available
-  if (window.tizenTubeAPI) {
+  if (window.pompyTubeAPI) {
     try {
-      await window.tizenTubeAPI.setConfig(`features.${key}`, value);
+      await window.pompyTubeAPI.setConfig(`features.${key}`, value);
     } catch (e) {
       // console.warn('Failed to sync config with main process:', e);
     }
@@ -67,15 +74,15 @@ const setConfig = async (key, value) => {
 
   // Also save to localStorage for persistence
   try {
-    const storedConfig = JSON.parse(localStorage.getItem('tizenTubeConfig') || '{}');
+    const storedConfig = JSON.parse(localStorage.getItem('pompyTubeConfig') || '{}');
     storedConfig[key] = value;
-    localStorage.setItem('tizenTubeConfig', JSON.stringify(storedConfig));
+    localStorage.setItem('pompyTubeConfig', JSON.stringify(storedConfig));
   } catch (e) {
     // console.warn('Failed to save config to localStorage:', e);
   }
 };
 
-// Configuration change emitter (compatible with TizenTube)
+// Configuration change emitter (compatible with PompyTube)
 const configChangeEmitter = {
   listeners: {},
   addEventListener(type, callback) {
@@ -95,11 +102,11 @@ const configChangeEmitter = {
 
 // Initialize configuration by loading from main process
 const initConfig = async () => {
-  if (window.tizenTubeAPI) {
+  if (window.pompyTubeAPI) {
     try {
-      const fullConfig = await window.tizenTubeAPI.getConfig('features');
+      const fullConfig = await window.pompyTubeAPI.getConfig('features');
       if (fullConfig) {
-        window.tizenTubeConfig = fullConfig;
+        window.pompyTubeConfig = fullConfig;
       }
     } catch (e) {
       // console.warn('Failed to load config from main process, using defaults:', e);
@@ -107,7 +114,7 @@ const initConfig = async () => {
   }
 
   // Ensure we have a config object
-  window.tizenTubeConfig = window.tizenTubeConfig || {};
+  window.pompyTubeConfig = window.pompyTubeConfig || {};
 
   // Apply defaults for any missing keys
   const defaults = {
@@ -135,12 +142,19 @@ const initConfig = async () => {
     hideWatchedVideosPages: [],
     enableHideEndScreenCards: false,
     enableYouThereRenderer: true,
-    enablePaidPromotionOverlay: true
+    enablePaidPromotionOverlay: true,
+    enableSpecialTheme: true,
+    themePrimaryColor: '#0f0f0f',
+    themeSecondaryColor: '#1a1a1a',
+    themeBorderColor: '#2a2a2a',
+    themeTextPrimary: '#ffffff',
+    themeTextSecondary: '#b8b8b8',
+    themeAccentColor: '#4CAF50'
   };
 
   for (const [key, value] of Object.entries(defaults)) {
-    if (window.tizenTubeConfig[key] === undefined) {
-      window.tizenTubeConfig[key] = value;
+    if (window.pompyTubeConfig[key] === undefined) {
+      window.pompyTubeConfig[key] = value;
     }
   }
 };
@@ -148,7 +162,7 @@ const initConfig = async () => {
 // Initialize config when script loads
 initConfig().catch(() => {});
 
-// Export functions to match TizenTube interface
+// Export functions to match PompyTube interface
 export function configRead(key) {
   const value = getConfigFromMain(key);
   if (value === undefined || value === null) {
@@ -178,7 +192,14 @@ export function configRead(key) {
       hideWatchedVideosPages: [],
       enableHideEndScreenCards: false,
       enableYouThereRenderer: true,
-      enablePaidPromotionOverlay: true
+    enablePaidPromotionOverlay: true,
+    enableSpecialTheme: true,
+    themePrimaryColor: '#0f0f0f',
+      themeSecondaryColor: '#1a1a1a',
+      themeBorderColor: '#2a2a2a',
+      themeTextPrimary: '#ffffff',
+      themeTextSecondary: '#b8b8b8',
+      themeAccentColor: '#4CAF50'
     };
     return defaults[key] || null;
   }

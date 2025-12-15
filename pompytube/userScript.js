@@ -20,23 +20,23 @@ import './ui/ytUI.js';
 import './utils/tiny-sha256.js';
 
 // Log initialization
-// console.log('TizenTube Electron Edition initialized');
+// console.log('PompyTube Electron Edition initialized');
 
 // Show welcome message if enabled
 if (configRead('showWelcomeToast')) {
   setTimeout(() => {
     if (window.showToast) {
-      window.showToast('TizenTube', 'Enhanced YouTube TV experience loaded');
+      window.showToast('PompyTube', 'Enhanced YouTube TV experience loaded');
     }
   }, 2000);
 }
 
 // Expose global functions for settings UI
-window.showTizenTubeSettings = function() {
-  // console.log('Opening TizenTube settings...');
+window.showPompyTubeSettings = function() {
+  // console.log('Opening PompyTube settings...');
   // This will be implemented in the UI components
-  if (window.openTizenTubeSettingsModal) {
-    window.openTizenTubeSettingsModal();
+  if (window.openPompyTubeSettingsModal) {
+    window.openPompyTubeSettingsModal();
   } else {
     // console.warn('Settings modal function not available');
   }
@@ -55,8 +55,8 @@ configChangeEmitter.addEventListener('configChange', (event) => {
 });
 
 // Export configuration functions to window for debugging
-window.tizenTubeConfigRead = configRead;
-window.tizenTubeConfigWrite = configWrite;
+window.pompyTubeConfigRead = configRead;
+window.pompyTubeConfigWrite = configWrite;
 
 // Log feature status
 // console.log('Features status:');
@@ -68,24 +68,24 @@ window.tizenTubeConfigWrite = configWrite;
 
 // Handle errors globally
 window.addEventListener('error', (event) => {
-  // console.error('TizenTube error:', event.error);
+  // console.error('PompyTube error:', event.error);
   if (window.showToast) {
-    window.showToast('TizenTube Error', 'An error occurred. Check console for details.');
+    window.showToast('PompyTube Error', 'An error occurred. Check console for details.');
   }
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-  // console.error('TizenTube unhandled rejection:', event.reason);
+  // console.error('PompyTube unhandled rejection:', event.reason);
   if (window.showToast) {
-    window.showToast('TizenTube Error', 'An unhandled promise rejection occurred.');
+    window.showToast('PompyTube Error', 'An unhandled promise rejection occurred.');
   }
 });
 
 // Check for updates periodically
 setInterval(async () => {
-  if (window.tizenTubeAPI) {
+  if (window.pompyTubeAPI) {
     try {
-      const version = await window.tizenTubeAPI.getAppVersion();
+      const version = await window.pompyTubeAPI.getAppVersion();
       // console.log(`Current version: ${version}`);
     } catch (e) {
       // console.warn('Failed to check version:', e);

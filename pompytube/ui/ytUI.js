@@ -1,4 +1,4 @@
-// YouTube TV UI utilities for TizenTube
+// YouTube TV UI utilities for PompyTube
 // This provides toast notifications and other UI helpers
 
 // Toast notification system
@@ -24,8 +24,7 @@ export function showToast(title, message, duration = 3000) {
   }
 
   const toast = document.createElement('div');
-  toast.style.backgroundColor = 'rgba(30, 30, 30, 0.9)';
-  toast.style.color = 'white';
+  toast.className = 'pompytube-toast';
   toast.style.padding = '12px 16px';
   toast.style.borderRadius = '4px';
   toast.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.3)';
@@ -75,7 +74,7 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Modal dialog system
-export function showModal(title, content, modalId = 'tizentube-modal', update = false) {
+export function showModal(title, content, modalId = 'pompytube-modal', update = false) {
   let modal = document.getElementById(modalId);
 
   if (!modal) {
@@ -94,8 +93,7 @@ export function showModal(title, content, modalId = 'tizentube-modal', update = 
     modal.style.flexDirection = 'column';
 
     const modalContent = document.createElement('div');
-    modalContent.style.backgroundColor = '#282828';
-    modalContent.style.color = 'white';
+    modalContent.className = 'pompytube-modal';
     modalContent.style.borderRadius = '8px';
     modalContent.style.padding = '20px';
     modalContent.style.maxWidth = '80%';
@@ -104,12 +102,12 @@ export function showModal(title, content, modalId = 'tizentube-modal', update = 
     modalContent.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.5)';
 
     const modalHeader = document.createElement('div');
+    modalHeader.className = 'pompytube-modal-header';
     modalHeader.style.display = 'flex';
     modalHeader.style.justifyContent = 'space-between';
     modalHeader.style.alignItems = 'center';
     modalHeader.style.marginBottom = '15px';
     modalHeader.style.paddingBottom = '10px';
-    modalHeader.style.borderBottom = '1px solid #444';
 
     const titleElement = document.createElement('h2');
     titleElement.style.margin = '0';
@@ -173,7 +171,7 @@ export function showModal(title, content, modalId = 'tizentube-modal', update = 
   };
 }
 
-export function closeModal(modalId = 'tizentube-modal') {
+export function closeModal(modalId = 'pompytube-modal') {
   const modal = document.getElementById(modalId);
   if (modal) {
     if (modal.cleanup) {
@@ -284,7 +282,7 @@ export function overlayMessageRenderer(message) {
 function handleCustomAction(action) {
   switch (action.action) {
     case 'SHOW_TOAST':
-      showToast('TizenTube', action.parameters);
+      showToast('PompyTube', action.parameters);
       break;
     case 'SETTINGS_UPDATE':
       // Handle settings update
@@ -297,7 +295,7 @@ function handleCustomAction(action) {
   }
 }
 
-// Export for compatibility with TizenTube
+// Export for compatibility with PompyTube
 window.showToast = showToast;
 window.showModal = showModal;
 window.closeModal = closeModal;

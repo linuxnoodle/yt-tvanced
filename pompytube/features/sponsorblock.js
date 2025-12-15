@@ -188,8 +188,14 @@ class SponsorBlockHandler {
       for (let i = 0; i < slider.classList.length; i++) {
         this.segmentsoverlay.classList.add(slider.classList[i]);
       }
-      this.segmentsoverlay.style.setProperty('height', `${sliderRect.height}px`, 'important');
-      this.segmentsoverlay.style.setProperty('bottom', `${sliderRect.bottom - sliderRect.top}px`, 'important');
+    this.segmentsoverlay.style.setProperty('height', `${sliderRect.height}px`, 'important');
+    this.segmentsoverlay.style.setProperty('bottom', `${sliderRect.bottom - sliderRect.top}px`, 'important');
+
+    // Fix for Windows rendering issue: ensure overlay doesn't affect video content
+    // Use isolation to prevent color blending with video content
+    this.segmentsoverlay.style.setProperty('isolation', 'isolate', 'important');
+    this.segmentsoverlay.style.setProperty('mix-blend-mode', 'normal', 'important');
+    this.segmentsoverlay.style.setProperty('backdrop-filter', 'none', 'important');
     }
     this.segments.forEach((segment) => {
       const [start, end] = segment.segment;
@@ -429,5 +435,5 @@ window.addEventListener(
 // console.log(`SponsorBlock ${configRead('enableSponsorBlock') ? 'enabled' : 'disabled'}`);
 
 if (configRead('enableSponsorBlock')) {
-  showToast('TizenTube', 'SponsorBlock is active');
+  showToast('PompyTube', 'SponsorBlock is active');
 }
