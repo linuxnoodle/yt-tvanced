@@ -128,7 +128,7 @@ function createWindow() {
   }, 100);
 
   // Set custom user agent to emulate Smart TV
-  mainWindow.webContents.setUserAgent('Mozilla/5.0 (WebOS; Linux/SmartTV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.128 Safari/537.36 WebAppManager');
+  mainWindow.webContents.setUserAgent('Mozilla/5.0 (Linux; Android 12; Chromecast HD Build/STTF.220621.013; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/106.0.5249.79 Mobile Safari/537.36');
 
   // Handle window events
   mainWindow.on('closed', () => {

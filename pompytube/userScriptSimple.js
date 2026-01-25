@@ -27,6 +27,8 @@ window.pompyTubeConfig = window.pompyTubeConfig || {
   enableHideEndScreenCards: false,
   enableYouThereRenderer: true,
   enablePaidPromotionOverlay: true,
+  enableSpeedControls: true,
+  defaultSpeed: 1.0,
   showWelcomeToast: true
 };
 

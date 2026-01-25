@@ -16,6 +16,30 @@ export function openPompyTubeSettingsModal() {
       value: 'enableAdBlock'
     },
     {
+      name: 'Speed Controls',
+      icon: 'SPEED',
+      value: 'enableSpeedControls',
+      options: [
+        {
+          name: 'Enable Speed Controls',
+          value: 'enableSpeedControls'
+        },
+        {
+          name: 'Default Speed',
+          value: 'defaultSpeed',
+          options: [
+            { name: '0.25x', value: '0.25' },
+            { name: '0.5x', value: '0.5' },
+            { name: '0.75x', value: '0.75' },
+            { name: '1x (Normal)', value: '1.0' },
+            { name: '1.25x', value: '1.25' },
+            { name: '1.5x', value: '1.5' },
+            { name: '2x', value: '2.0' }
+          ]
+        }
+      ]
+    },
+    {
       name: 'SponsorBlock',
       icon: 'MONEY_HAND',
       value: null,
